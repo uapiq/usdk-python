@@ -1,6 +1,6 @@
 [project]
 name = "usdk"
-version = "0.0.1"
+version = "1.0.0"
 description = "The official Python library for the uapi API"
 dynamic = ["readme"]
 license = "Apache-2.0"
