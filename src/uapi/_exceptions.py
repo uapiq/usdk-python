@@ -18,11 +18,11 @@ __all__ = [
 ]
 
 
-class UsdkError(Exception):
+class uAPIError(Exception):
     pass
 
 
-class APIError(UsdkError):
+class APIError(uAPIError):
     message: str
     request: httpx.Request
 

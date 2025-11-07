@@ -6,8 +6,8 @@ import httpx
 import pytest
 import pydantic
 
-from usdk import Usdk, AsyncUsdk, BaseModel
-from usdk._response import (
+from uapi import AsyncuAPI, BaseModel, uAPI
+from uapi._response import (
     APIResponse,
     BaseAPIResponse,
     AsyncAPIResponse,
@@ -15,8 +15,8 @@ from usdk._response import (
     AsyncBinaryAPIResponse,
     extract_response_type,
 )
-from usdk._streaming import Stream
-from usdk._base_client import FinalRequestOptions
+from uapi._streaming import Stream
+from uapi._base_client import FinalRequestOptions
 
 
 class ConcreteBaseAPIResponse(APIResponse[bytes]): ...
@@ -37,7 +37,7 @@ def test_extract_response_type_direct_classes() -> None:
 def test_extract_response_type_direct_class_missing_type_arg() -> None:
     with pytest.raises(
         RuntimeError,
-        match="Expected type <class 'usdk._response.AsyncAPIResponse'> to have a type argument at index 0 but it did not",
+        match="Expected type <class 'uapi._response.AsyncAPIResponse'> to have a type argument at index 0 but it did not",
     ):
         extract_response_type(AsyncAPIResponse)
 
@@ -56,7 +56,7 @@ def test_extract_response_type_binary_response() -> None:
 class PydanticModel(pydantic.BaseModel): ...
 
 
-def test_response_parse_mismatched_basemodel(client: Usdk) -> None:
+def test_response_parse_mismatched_basemodel(client: uAPI) -> None:
     response = APIResponse(
         raw=httpx.Response(200, content=b"foo"),
         client=client,
@@ -68,13 +68,13 @@ def test_response_parse_mismatched_basemodel(client: Usdk) -> None:
 
     with pytest.raises(
         TypeError,
-        match="Pydantic models must subclass our base model type, e.g. `from usdk import BaseModel`",
+        match="Pydantic models must subclass our base model type, e.g. `from uapi import BaseModel`",
     ):
         response.parse(to=PydanticModel)
 
 
 @pytest.mark.asyncio
-async def test_async_response_parse_mismatched_basemodel(async_client: AsyncUsdk) -> None:
+async def test_async_response_parse_mismatched_basemodel(async_client: AsyncuAPI) -> None:
     response = AsyncAPIResponse(
         raw=httpx.Response(200, content=b"foo"),
         client=async_client,
@@ -86,12 +86,12 @@ async def test_async_response_parse_mismatched_basemodel(async_client: AsyncUsdk
 
     with pytest.raises(
         TypeError,
-        match="Pydantic models must subclass our base model type, e.g. `from usdk import BaseModel`",
+        match="Pydantic models must subclass our base model type, e.g. `from uapi import BaseModel`",
     ):
         await response.parse(to=PydanticModel)
 
 
-def test_response_parse_custom_stream(client: Usdk) -> None:
+def test_response_parse_custom_stream(client: uAPI) -> None:
     response = APIResponse(
         raw=httpx.Response(200, content=b"foo"),
         client=client,
@@ -106,7 +106,7 @@ def test_response_parse_custom_stream(client: Usdk) -> None:
 
 
 @pytest.mark.asyncio
-async def test_async_response_parse_custom_stream(async_client: AsyncUsdk) -> None:
+async def test_async_response_parse_custom_stream(async_client: AsyncuAPI) -> None:
     response = AsyncAPIResponse(
         raw=httpx.Response(200, content=b"foo"),
         client=async_client,
@@ -125,7 +125,7 @@ class CustomModel(BaseModel):
     bar: int
 
 
-def test_response_parse_custom_model(client: Usdk) -> None:
+def test_response_parse_custom_model(client: uAPI) -> None:
     response = APIResponse(
         raw=httpx.Response(200, content=json.dumps({"foo": "hello!", "bar": 2})),
         client=client,
@@ -141,7 +141,7 @@ def test_response_parse_custom_model(client: Usdk) -> None:
 
 
 @pytest.mark.asyncio
-async def test_async_response_parse_custom_model(async_client: AsyncUsdk) -> None:
+async def test_async_response_parse_custom_model(async_client: AsyncuAPI) -> None:
     response = AsyncAPIResponse(
         raw=httpx.Response(200, content=json.dumps({"foo": "hello!", "bar": 2})),
         client=async_client,
@@ -156,7 +156,7 @@ async def test_async_response_parse_custom_model(async_client: AsyncUsdk) -> Non
     assert obj.bar == 2
 
 
-def test_response_parse_annotated_type(client: Usdk) -> None:
+def test_response_parse_annotated_type(client: uAPI) -> None:
     response = APIResponse(
         raw=httpx.Response(200, content=json.dumps({"foo": "hello!", "bar": 2})),
         client=client,
@@ -173,7 +173,7 @@ def test_response_parse_annotated_type(client: Usdk) -> None:
     assert obj.bar == 2
 
 
-async def test_async_response_parse_annotated_type(async_client: AsyncUsdk) -> None:
+async def test_async_response_parse_annotated_type(async_client: AsyncuAPI) -> None:
     response = AsyncAPIResponse(
         raw=httpx.Response(200, content=json.dumps({"foo": "hello!", "bar": 2})),
         client=async_client,
@@ -201,7 +201,7 @@ async def test_async_response_parse_annotated_type(async_client: AsyncUsdk) -> N
         ("FalSe", False),
     ],
 )
-def test_response_parse_bool(client: Usdk, content: str, expected: bool) -> None:
+def test_response_parse_bool(client: uAPI, content: str, expected: bool) -> None:
     response = APIResponse(
         raw=httpx.Response(200, content=content),
         client=client,
@@ -226,7 +226,7 @@ def test_response_parse_bool(client: Usdk, content: str, expected: bool) -> None
         ("FalSe", False),
     ],
 )
-async def test_async_response_parse_bool(client: AsyncUsdk, content: str, expected: bool) -> None:
+async def test_async_response_parse_bool(client: AsyncuAPI, content: str, expected: bool) -> None:
     response = AsyncAPIResponse(
         raw=httpx.Response(200, content=content),
         client=client,
@@ -245,7 +245,7 @@ class OtherModel(BaseModel):
 
 
 @pytest.mark.parametrize("client", [False], indirect=True)  # loose validation
-def test_response_parse_expect_model_union_non_json_content(client: Usdk) -> None:
+def test_response_parse_expect_model_union_non_json_content(client: uAPI) -> None:
     response = APIResponse(
         raw=httpx.Response(200, content=b"foo", headers={"Content-Type": "application/text"}),
         client=client,
@@ -262,7 +262,7 @@ def test_response_parse_expect_model_union_non_json_content(client: Usdk) -> Non
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("async_client", [False], indirect=True)  # loose validation
-async def test_async_response_parse_expect_model_union_non_json_content(async_client: AsyncUsdk) -> None:
+async def test_async_response_parse_expect_model_union_non_json_content(async_client: AsyncuAPI) -> None:
     response = AsyncAPIResponse(
         raw=httpx.Response(200, content=b"foo", headers={"Content-Type": "application/text"}),
         client=async_client,

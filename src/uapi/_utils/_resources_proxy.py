@@ -7,17 +7,17 @@ from ._proxy import LazyProxy
 
 
 class ResourcesProxy(LazyProxy[Any]):
-    """A proxy for the `usdk.resources` module.
+    """A proxy for the `uapi.resources` module.
 
-    This is used so that we can lazily import `usdk.resources` only when
-    needed *and* so that users can just import `usdk` and reference `usdk.resources`
+    This is used so that we can lazily import `uapi.resources` only when
+    needed *and* so that users can just import `uapi` and reference `uapi.resources`
     """
 
     @override
     def __load__(self) -> Any:
         import importlib
 
-        mod = importlib.import_module("usdk.resources")
+        mod = importlib.import_module("uapi.resources")
         return mod
 
 
