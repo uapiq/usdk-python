@@ -5,14 +5,13 @@ import typing as _t
 from . import types
 from ._types import NOT_GIVEN, Omit, NoneType, NotGiven, Transport, ProxiesTypes, omit, not_given
 from ._utils import file_from_path
-from ._client import Usdk, Client, Stream, Timeout, AsyncUsdk, Transport, AsyncClient, AsyncStream, RequestOptions
+from ._client import Client, Stream, Timeout, AsyncuAPI, Transport, AsyncClient, AsyncStream, RequestOptions, uAPI
 from ._models import BaseModel
 from ._version import __title__, __version__
 from ._response import APIResponse as APIResponse, AsyncAPIResponse as AsyncAPIResponse
 from ._constants import DEFAULT_TIMEOUT, DEFAULT_MAX_RETRIES, DEFAULT_CONNECTION_LIMITS
 from ._exceptions import (
     APIError,
-    UsdkError,
     ConflictError,
     NotFoundError,
     APIStatusError,
@@ -25,6 +24,7 @@ from ._exceptions import (
     PermissionDeniedError,
     UnprocessableEntityError,
     APIResponseValidationError,
+    uAPIError,
 )
 from ._base_client import DefaultHttpxClient, DefaultAioHttpClient, DefaultAsyncHttpxClient
 from ._utils._logs import setup_logging as _setup_logging
@@ -41,7 +41,7 @@ __all__ = [
     "not_given",
     "Omit",
     "omit",
-    "UsdkError",
+    "uAPIError",
     "APIError",
     "APIStatusError",
     "APITimeoutError",
@@ -61,8 +61,8 @@ __all__ = [
     "AsyncClient",
     "Stream",
     "AsyncStream",
-    "Usdk",
-    "AsyncUsdk",
+    "uAPI",
+    "AsyncuAPI",
     "file_from_path",
     "BaseModel",
     "DEFAULT_TIMEOUT",
@@ -81,12 +81,12 @@ _setup_logging()
 # Update the __module__ attribute for exported symbols so that
 # error messages point to this module instead of the module
 # it was originally defined in, e.g.
-# usdk._exceptions.NotFoundError -> usdk.NotFoundError
+# uapi._exceptions.NotFoundError -> uapi.NotFoundError
 __locals = locals()
 for __name in __all__:
     if not __name.startswith("__"):
         try:
-            __locals[__name].__module__ = "usdk"
+            __locals[__name].__module__ = "uapi"
         except (TypeError, AttributeError):
             # Some of our exported symbols are builtins which we can't set attributes for.
             pass

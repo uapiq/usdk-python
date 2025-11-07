@@ -8,15 +8,15 @@ from typing_extensions import Required, Annotated, TypedDict
 
 import pytest
 
-from usdk._types import Base64FileInput, omit, not_given
-from usdk._utils import (
+from uapi._types import Base64FileInput, omit, not_given
+from uapi._utils import (
     PropertyInfo,
     transform as _transform,
     parse_datetime,
     async_transform as _async_transform,
 )
-from usdk._compat import PYDANTIC_V1
-from usdk._models import BaseModel
+from uapi._compat import PYDANTIC_V1
+from uapi._models import BaseModel
 
 _T = TypeVar("_T")
 

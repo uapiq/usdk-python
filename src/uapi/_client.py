@@ -10,8 +10,12 @@ import httpx
 
 from . import _exceptions
 from ._qs import Querystring
+from .types import client_search_params, client_extract_params
 from ._types import (
+    Body,
     Omit,
+    Query,
+    Headers,
     Timeout,
     NotGiven,
     Transport,
@@ -19,33 +23,44 @@ from ._types import (
     RequestOptions,
     not_given,
 )
-from ._utils import is_given, get_async_library
+from ._utils import (
+    is_given,
+    maybe_transform,
+    get_async_library,
+    async_maybe_transform,
+)
 from ._version import __version__
-from .resources import search, extract
+from ._response import (
+    to_raw_response_wrapper,
+    to_streamed_response_wrapper,
+    async_to_raw_response_wrapper,
+    async_to_streamed_response_wrapper,
+)
 from ._streaming import Stream as Stream, AsyncStream as AsyncStream
-from ._exceptions import UsdkError, APIStatusError
+from ._exceptions import APIStatusError, uAPIError
 from ._base_client import (
     DEFAULT_MAX_RETRIES,
     SyncAPIClient,
     AsyncAPIClient,
+    make_request_options,
 )
 
-__all__ = ["Timeout", "Transport", "ProxiesTypes", "RequestOptions", "Usdk", "AsyncUsdk", "Client", "AsyncClient"]
+__all__ = ["Timeout", "Transport", "ProxiesTypes", "RequestOptions", "uAPI", "AsyncuAPI", "Client", "AsyncClient"]
 
 
-class Usdk(SyncAPIClient):
-    extract: extract.ExtractResource
-    search: search.SearchResource
-    with_raw_response: UsdkWithRawResponse
-    with_streaming_response: UsdkWithStreamedResponse
+class uAPI(SyncAPIClient):
+    with_raw_response: uAPIWithRawResponse
+    with_streaming_response: uAPIWithStreamedResponse
 
     # client options
     api_key: str
+    cache_ttl: int | None
 
     def __init__(
         self,
         *,
         api_key: str | None = None,
+        cache_ttl: int | None = None,
         base_url: str | httpx.URL | None = None,
         timeout: float | Timeout | None | NotGiven = not_given,
         max_retries: int = DEFAULT_MAX_RETRIES,
@@ -65,22 +80,24 @@ class Usdk(SyncAPIClient):
         # part of our public interface in the future.
         _strict_response_validation: bool = False,
     ) -> None:
-        """Construct a new synchronous Usdk client instance.
+        """Construct a new synchronous uAPI client instance.
 
-        This automatically infers the `api_key` argument from the `USDK_API_KEY` environment variable if it is not provided.
+        This automatically infers the `api_key` argument from the `UAPI_API_KEY` environment variable if it is not provided.
         """
         if api_key is None:
-            api_key = os.environ.get("USDK_API_KEY")
+            api_key = os.environ.get("UAPI_API_KEY")
         if api_key is None:
-            raise UsdkError(
-                "The api_key client option must be set either by passing api_key to the client or by setting the USDK_API_KEY environment variable"
+            raise uAPIError(
+                "The api_key client option must be set either by passing api_key to the client or by setting the UAPI_API_KEY environment variable"
             )
         self.api_key = api_key
 
+        self.cache_ttl = cache_ttl
+
         if base_url is None:
-            base_url = os.environ.get("USDK_BASE_URL")
+            base_url = os.environ.get("UAPI_BASE_URL")
         if base_url is None:
-            base_url = f"https://api.example.com"
+            base_url = f"https://api.uapi.nl"
 
         super().__init__(
             version=__version__,
@@ -93,10 +110,8 @@ class Usdk(SyncAPIClient):
             _strict_response_validation=_strict_response_validation,
         )
 
-        self.extract = extract.ExtractResource(self)
-        self.search = search.SearchResource(self)
-        self.with_raw_response = UsdkWithRawResponse(self)
-        self.with_streaming_response = UsdkWithStreamedResponse(self)
+        self.with_raw_response = uAPIWithRawResponse(self)
+        self.with_streaming_response = uAPIWithStreamedResponse(self)
 
     @property
     @override
@@ -107,7 +122,7 @@ class Usdk(SyncAPIClient):
     @override
     def auth_headers(self) -> dict[str, str]:
         api_key = self.api_key
-        return {"X-Valet-Key": api_key}
+        return {"X-API-Key": api_key}
 
     @property
     @override
@@ -115,6 +130,7 @@ class Usdk(SyncAPIClient):
         return {
             **super().default_headers,
             "X-Stainless-Async": "false",
+            "x-cache-ttl": str(self.cache_ttl) if self.cache_ttl is not None else Omit(),
             **self._custom_headers,
         }
 
@@ -122,6 +138,7 @@ class Usdk(SyncAPIClient):
         self,
         *,
         api_key: str | None = None,
+        cache_ttl: int | None = None,
         base_url: str | httpx.URL | None = None,
         timeout: float | Timeout | None | NotGiven = not_given,
         http_client: httpx.Client | None = None,
@@ -156,6 +173,7 @@ class Usdk(SyncAPIClient):
         http_client = http_client or self._client
         return self.__class__(
             api_key=api_key or self.api_key,
+            cache_ttl=cache_ttl or self.cache_ttl,
             base_url=base_url or self.base_url,
             timeout=self.timeout if isinstance(timeout, NotGiven) else timeout,
             http_client=http_client,
@@ -168,6 +186,76 @@ class Usdk(SyncAPIClient):
     # Alias for `copy` for nicer inline usage, e.g.
     # client.with_options(timeout=10).foo.create(...)
     with_options = copy
+
+    def extract(
+        self,
+        *,
+        url: str,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> object:
+        """
+        Extract Get
+
+        Args:
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        return self.get(
+            "/v1/extract",
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform({"url": url}, client_extract_params.ClientExtractParams),
+            ),
+            cast_to=object,
+        )
+
+    def search(
+        self,
+        *,
+        query: str,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> object:
+        """
+        Search Get
+
+        Args:
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        return self.get(
+            "/v1/search",
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform({"query": query}, client_search_params.ClientSearchParams),
+            ),
+            cast_to=object,
+        )
 
     @override
     def _make_status_error(
@@ -203,19 +291,19 @@ class Usdk(SyncAPIClient):
         return APIStatusError(err_msg, response=response, body=body)
 
 
-class AsyncUsdk(AsyncAPIClient):
-    extract: extract.AsyncExtractResource
-    search: search.AsyncSearchResource
-    with_raw_response: AsyncUsdkWithRawResponse
-    with_streaming_response: AsyncUsdkWithStreamedResponse
+class AsyncuAPI(AsyncAPIClient):
+    with_raw_response: AsyncuAPIWithRawResponse
+    with_streaming_response: AsyncuAPIWithStreamedResponse
 
     # client options
     api_key: str
+    cache_ttl: int | None
 
     def __init__(
         self,
         *,
         api_key: str | None = None,
+        cache_ttl: int | None = None,
         base_url: str | httpx.URL | None = None,
         timeout: float | Timeout | None | NotGiven = not_given,
         max_retries: int = DEFAULT_MAX_RETRIES,
@@ -235,22 +323,24 @@ class AsyncUsdk(AsyncAPIClient):
         # part of our public interface in the future.
         _strict_response_validation: bool = False,
     ) -> None:
-        """Construct a new async AsyncUsdk client instance.
+        """Construct a new async AsyncuAPI client instance.
 
-        This automatically infers the `api_key` argument from the `USDK_API_KEY` environment variable if it is not provided.
+        This automatically infers the `api_key` argument from the `UAPI_API_KEY` environment variable if it is not provided.
         """
         if api_key is None:
-            api_key = os.environ.get("USDK_API_KEY")
+            api_key = os.environ.get("UAPI_API_KEY")
         if api_key is None:
-            raise UsdkError(
-                "The api_key client option must be set either by passing api_key to the client or by setting the USDK_API_KEY environment variable"
+            raise uAPIError(
+                "The api_key client option must be set either by passing api_key to the client or by setting the UAPI_API_KEY environment variable"
             )
         self.api_key = api_key
 
+        self.cache_ttl = cache_ttl
+
         if base_url is None:
-            base_url = os.environ.get("USDK_BASE_URL")
+            base_url = os.environ.get("UAPI_BASE_URL")
         if base_url is None:
-            base_url = f"https://api.example.com"
+            base_url = f"https://api.uapi.nl"
 
         super().__init__(
             version=__version__,
@@ -263,10 +353,8 @@ class AsyncUsdk(AsyncAPIClient):
             _strict_response_validation=_strict_response_validation,
         )
 
-        self.extract = extract.AsyncExtractResource(self)
-        self.search = search.AsyncSearchResource(self)
-        self.with_raw_response = AsyncUsdkWithRawResponse(self)
-        self.with_streaming_response = AsyncUsdkWithStreamedResponse(self)
+        self.with_raw_response = AsyncuAPIWithRawResponse(self)
+        self.with_streaming_response = AsyncuAPIWithStreamedResponse(self)
 
     @property
     @override
@@ -277,7 +365,7 @@ class AsyncUsdk(AsyncAPIClient):
     @override
     def auth_headers(self) -> dict[str, str]:
         api_key = self.api_key
-        return {"X-Valet-Key": api_key}
+        return {"X-API-Key": api_key}
 
     @property
     @override
@@ -285,6 +373,7 @@ class AsyncUsdk(AsyncAPIClient):
         return {
             **super().default_headers,
             "X-Stainless-Async": f"async:{get_async_library()}",
+            "x-cache-ttl": str(self.cache_ttl) if self.cache_ttl is not None else Omit(),
             **self._custom_headers,
         }
 
@@ -292,6 +381,7 @@ class AsyncUsdk(AsyncAPIClient):
         self,
         *,
         api_key: str | None = None,
+        cache_ttl: int | None = None,
         base_url: str | httpx.URL | None = None,
         timeout: float | Timeout | None | NotGiven = not_given,
         http_client: httpx.AsyncClient | None = None,
@@ -326,6 +416,7 @@ class AsyncUsdk(AsyncAPIClient):
         http_client = http_client or self._client
         return self.__class__(
             api_key=api_key or self.api_key,
+            cache_ttl=cache_ttl or self.cache_ttl,
             base_url=base_url or self.base_url,
             timeout=self.timeout if isinstance(timeout, NotGiven) else timeout,
             http_client=http_client,
@@ -338,6 +429,76 @@ class AsyncUsdk(AsyncAPIClient):
     # Alias for `copy` for nicer inline usage, e.g.
     # client.with_options(timeout=10).foo.create(...)
     with_options = copy
+
+    async def extract(
+        self,
+        *,
+        url: str,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> object:
+        """
+        Extract Get
+
+        Args:
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        return await self.get(
+            "/v1/extract",
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform({"url": url}, client_extract_params.ClientExtractParams),
+            ),
+            cast_to=object,
+        )
+
+    async def search(
+        self,
+        *,
+        query: str,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> object:
+        """
+        Search Get
+
+        Args:
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        return await self.get(
+            "/v1/search",
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform({"query": query}, client_search_params.ClientSearchParams),
+            ),
+            cast_to=object,
+        )
 
     @override
     def _make_status_error(
@@ -373,30 +534,46 @@ class AsyncUsdk(AsyncAPIClient):
         return APIStatusError(err_msg, response=response, body=body)
 
 
-class UsdkWithRawResponse:
-    def __init__(self, client: Usdk) -> None:
-        self.extract = extract.ExtractResourceWithRawResponse(client.extract)
-        self.search = search.SearchResourceWithRawResponse(client.search)
+class uAPIWithRawResponse:
+    def __init__(self, client: uAPI) -> None:
+        self.extract = to_raw_response_wrapper(
+            client.extract,
+        )
+        self.search = to_raw_response_wrapper(
+            client.search,
+        )
 
 
-class AsyncUsdkWithRawResponse:
-    def __init__(self, client: AsyncUsdk) -> None:
-        self.extract = extract.AsyncExtractResourceWithRawResponse(client.extract)
-        self.search = search.AsyncSearchResourceWithRawResponse(client.search)
+class AsyncuAPIWithRawResponse:
+    def __init__(self, client: AsyncuAPI) -> None:
+        self.extract = async_to_raw_response_wrapper(
+            client.extract,
+        )
+        self.search = async_to_raw_response_wrapper(
+            client.search,
+        )
 
 
-class UsdkWithStreamedResponse:
-    def __init__(self, client: Usdk) -> None:
-        self.extract = extract.ExtractResourceWithStreamingResponse(client.extract)
-        self.search = search.SearchResourceWithStreamingResponse(client.search)
+class uAPIWithStreamedResponse:
+    def __init__(self, client: uAPI) -> None:
+        self.extract = to_streamed_response_wrapper(
+            client.extract,
+        )
+        self.search = to_streamed_response_wrapper(
+            client.search,
+        )
 
 
-class AsyncUsdkWithStreamedResponse:
-    def __init__(self, client: AsyncUsdk) -> None:
-        self.extract = extract.AsyncExtractResourceWithStreamingResponse(client.extract)
-        self.search = search.AsyncSearchResourceWithStreamingResponse(client.search)
+class AsyncuAPIWithStreamedResponse:
+    def __init__(self, client: AsyncuAPI) -> None:
+        self.extract = async_to_streamed_response_wrapper(
+            client.extract,
+        )
+        self.search = async_to_streamed_response_wrapper(
+            client.search,
+        )
 
 
-Client = Usdk
+Client = uAPI
 
-AsyncClient = AsyncUsdk
+AsyncClient = AsyncuAPI

@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from typing_extensions import Required, TypedDict
 
-__all__ = ["SearchRetrieveParams"]
+__all__ = ["ClientExtractParams"]
 
 
-class SearchRetrieveParams(TypedDict, total=False):
-    query: Required[str]
+class ClientExtractParams(TypedDict, total=False):
+    url: Required[str]

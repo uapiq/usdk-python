@@ -1,9 +1,9 @@
-# Usdk Python API library
+# uAPI Python API library
 
 <!-- prettier-ignore -->
-[![PyPI version](https://img.shields.io/pypi/v/usdk.svg?label=pypi%20(stable))](https://pypi.org/project/usdk/)
+[![PyPI version](https://img.shields.io/pypi/v/uapi.svg?label=pypi%20(stable))](https://pypi.org/project/uapi/)
 
-The Usdk Python library provides convenient access to the Usdk REST API from any Python 3.8+
+The uAPI Python library provides convenient access to the uAPI REST API from any Python 3.8+
 application. The library includes type definitions for all request params and response fields,
 and offers both synchronous and asynchronous clients powered by [httpx](https://github.com/encode/httpx).
 
@@ -11,7 +11,7 @@ It is generated with [Stainless](https://www.stainless.com/).
 
 ## Documentation
 
-The full API of this library can be found in [api.md](api.md).
+The REST API documentation can be found on [docs.uapi.nl](https://docs.uapi.nl/). The full API of this library can be found in [api.md](api.md).
 
 ## Installation
 
@@ -21,7 +21,7 @@ pip install git+ssh://git@github.com/stainless-sdks/usdk-python.git
 ```
 
 > [!NOTE]
-> Once this package is [published to PyPI](https://www.stainless.com/docs/guides/publish), this will become: `pip install usdk`
+> Once this package is [published to PyPI](https://www.stainless.com/docs/guides/publish), this will become: `pip install uapi`
 
 ## Usage
 
@@ -29,39 +29,39 @@ The full API of this library can be found in [api.md](api.md).
 
 ```python
 import os
-from usdk import Usdk
+from uapi import uAPI
 
-client = Usdk(
-    api_key=os.environ.get("USDK_API_KEY"),  # This is the default and can be omitted
+client = uAPI(
+    api_key=os.environ.get("UAPI_API_KEY"),  # This is the default and can be omitted
 )
 
-extract = client.extract.retrieve(
-    url="REPLACE_ME",
+response = client.search(
+    query="When is the next solar eclipse?",
 )
 ```
 
 While you can provide an `api_key` keyword argument,
 we recommend using [python-dotenv](https://pypi.org/project/python-dotenv/)
-to add `USDK_API_KEY="My API Key"` to your `.env` file
+to add `UAPI_API_KEY="My API Key"` to your `.env` file
 so that your API Key is not stored in source control.
 
 ## Async usage
 
-Simply import `AsyncUsdk` instead of `Usdk` and use `await` with each API call:
+Simply import `AsyncuAPI` instead of `uAPI` and use `await` with each API call:
 
 ```python
 import os
 import asyncio
-from usdk import AsyncUsdk
+from uapi import AsyncuAPI
 
-client = AsyncUsdk(
-    api_key=os.environ.get("USDK_API_KEY"),  # This is the default and can be omitted
+client = AsyncuAPI(
+    api_key=os.environ.get("UAPI_API_KEY"),  # This is the default and can be omitted
 )
 
 
 async def main() -> None:
-    extract = await client.extract.retrieve(
-        url="REPLACE_ME",
+    response = await client.search(
+        query="When is the next solar eclipse?",
     )
 
 
@@ -78,24 +78,24 @@ You can enable this by installing `aiohttp`:
 
 ```sh
 # install from this staging repo
-pip install 'usdk[aiohttp] @ git+ssh://git@github.com/stainless-sdks/usdk-python.git'
+pip install 'uapi[aiohttp] @ git+ssh://git@github.com/stainless-sdks/usdk-python.git'
 ```
 
 Then you can enable it by instantiating the client with `http_client=DefaultAioHttpClient()`:
 
 ```python
 import asyncio
-from usdk import DefaultAioHttpClient
-from usdk import AsyncUsdk
+from uapi import DefaultAioHttpClient
+from uapi import AsyncuAPI
 
 
 async def main() -> None:
-    async with AsyncUsdk(
+    async with AsyncuAPI(
         api_key="My API Key",
         http_client=DefaultAioHttpClient(),
     ) as client:
-        extract = await client.extract.retrieve(
-            url="REPLACE_ME",
+        response = await client.search(
+            query="When is the next solar eclipse?",
         )
 
 
@@ -113,29 +113,29 @@ Typed requests and responses provide autocomplete and documentation within your 
 
 ## Handling errors
 
-When the library is unable to connect to the API (for example, due to network connection problems or a timeout), a subclass of `usdk.APIConnectionError` is raised.
+When the library is unable to connect to the API (for example, due to network connection problems or a timeout), a subclass of `uapi.APIConnectionError` is raised.
 
 When the API returns a non-success status code (that is, 4xx or 5xx
-response), a subclass of `usdk.APIStatusError` is raised, containing `status_code` and `response` properties.
+response), a subclass of `uapi.APIStatusError` is raised, containing `status_code` and `response` properties.
 
-All errors inherit from `usdk.APIError`.
+All errors inherit from `uapi.APIError`.
 
 ```python
-import usdk
-from usdk import Usdk
+import uapi
+from uapi import uAPI
 
-client = Usdk()
+client = uAPI()
 
 try:
-    client.extract.retrieve(
-        url="REPLACE_ME",
+    client.extract(
+        url="https://finance.yahoo.com/quote/NVDA/",
     )
-except usdk.APIConnectionError as e:
+except uapi.APIConnectionError as e:
     print("The server could not be reached")
     print(e.__cause__)  # an underlying Exception, likely raised within httpx.
-except usdk.RateLimitError as e:
+except uapi.RateLimitError as e:
     print("A 429 status code was received; we should back off a bit.")
-except usdk.APIStatusError as e:
+except uapi.APIStatusError as e:
     print("Another non-200-range status code was received")
     print(e.status_code)
     print(e.response)
@@ -163,17 +163,17 @@ Connection errors (for example, due to a network connectivity problem), 408 Requ
 You can use the `max_retries` option to configure or disable retry settings:
 
 ```python
-from usdk import Usdk
+from uapi import uAPI
 
 # Configure the default for all requests:
-client = Usdk(
+client = uAPI(
     # default is 2
     max_retries=0,
 )
 
 # Or, configure per-request:
-client.with_options(max_retries=5).extract.retrieve(
-    url="REPLACE_ME",
+client.with_options(max_retries=5).extract(
+    url="https://finance.yahoo.com/quote/NVDA/",
 )
 ```
 
@@ -183,22 +183,22 @@ By default requests time out after 1 minute. You can configure this with a `time
 which accepts a float or an [`httpx.Timeout`](https://www.python-httpx.org/advanced/timeouts/#fine-tuning-the-configuration) object:
 
 ```python
-from usdk import Usdk
+from uapi import uAPI
 
 # Configure the default for all requests:
-client = Usdk(
+client = uAPI(
     # 20 seconds (default is 1 minute)
     timeout=20.0,
 )
 
 # More granular control:
-client = Usdk(
+client = uAPI(
     timeout=httpx.Timeout(60.0, read=5.0, write=10.0, connect=2.0),
 )
 
 # Override per-request:
-client.with_options(timeout=5.0).extract.retrieve(
-    url="REPLACE_ME",
+client.with_options(timeout=5.0).extract(
+    url="https://finance.yahoo.com/quote/NVDA/",
 )
 ```
 
@@ -212,10 +212,10 @@ Note that requests that time out are [retried twice by default](#retries).
 
 We use the standard library [`logging`](https://docs.python.org/3/library/logging.html) module.
 
-You can enable logging by setting the environment variable `USDK_LOG` to `info`.
+You can enable logging by setting the environment variable `UAPI_LOG` to `info`.
 
 ```shell
-$ export USDK_LOG=info
+$ export UAPI_LOG=info
 ```
 
 Or to `debug` for more verbose logging.
@@ -237,21 +237,21 @@ if response.my_field is None:
 The "raw" Response object can be accessed by prefixing `.with_raw_response.` to any HTTP method call, e.g.,
 
 ```py
-from usdk import Usdk
+from uapi import uAPI
 
-client = Usdk()
-response = client.extract.with_raw_response.retrieve(
-    url="REPLACE_ME",
+client = uAPI()
+response = client.with_raw_response.extract(
+    url="https://finance.yahoo.com/quote/NVDA/",
 )
 print(response.headers.get('X-My-Header'))
 
-extract = response.parse()  # get the object that `extract.retrieve()` would have returned
-print(extract)
+client = response.parse()  # get the object that `extract()` would have returned
+print(client)
 ```
 
-These methods return an [`APIResponse`](https://github.com/stainless-sdks/usdk-python/tree/main/src/usdk/_response.py) object.
+These methods return an [`APIResponse`](https://github.com/stainless-sdks/usdk-python/tree/main/src/uapi/_response.py) object.
 
-The async client returns an [`AsyncAPIResponse`](https://github.com/stainless-sdks/usdk-python/tree/main/src/usdk/_response.py) with the same structure, the only difference being `await`able methods for reading the response content.
+The async client returns an [`AsyncAPIResponse`](https://github.com/stainless-sdks/usdk-python/tree/main/src/uapi/_response.py) with the same structure, the only difference being `await`able methods for reading the response content.
 
 #### `.with_streaming_response`
 
@@ -260,8 +260,8 @@ The above interface eagerly reads the full response body when you make the reque
 To stream the response body, use `.with_streaming_response` instead, which requires a context manager and only reads the response body once you call `.read()`, `.text()`, `.json()`, `.iter_bytes()`, `.iter_text()`, `.iter_lines()` or `.parse()`. In the async client, these are async methods.
 
 ```python
-with client.extract.with_streaming_response.retrieve(
-    url="REPLACE_ME",
+with client.with_streaming_response.extract(
+    url="https://finance.yahoo.com/quote/NVDA/",
 ) as response:
     print(response.headers.get("X-My-Header"))
 
@@ -315,10 +315,10 @@ You can directly override the [httpx client](https://www.python-httpx.org/api/#c
 
 ```python
 import httpx
-from usdk import Usdk, DefaultHttpxClient
+from uapi import uAPI, DefaultHttpxClient
 
-client = Usdk(
-    # Or use the `USDK_BASE_URL` env var
+client = uAPI(
+    # Or use the `UAPI_BASE_URL` env var
     base_url="http://my.test.server.example.com:8083",
     http_client=DefaultHttpxClient(
         proxy="http://my.test.proxy.example.com",
@@ -338,9 +338,9 @@ client.with_options(http_client=DefaultHttpxClient(...))
 By default the library closes underlying HTTP connections whenever the client is [garbage collected](https://docs.python.org/3/reference/datamodel.html#object.__del__). You can manually close the client using the `.close()` method if desired, or with a context manager that closes when exiting.
 
 ```py
-from usdk import Usdk
+from uapi import uAPI
 
-with Usdk() as client:
+with uAPI() as client:
   # make requests here
   ...
 
@@ -366,8 +366,8 @@ If you've upgraded to the latest version but aren't seeing any new features you 
 You can determine the version that is being used at runtime with:
 
 ```py
-import usdk
-print(usdk.__version__)
+import uapi
+print(uapi.__version__)
 ```
 
 ## Requirements
