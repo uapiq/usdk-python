@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.0.1 (2025-11-11)
+
+Full Changelog: [v1.0.0...v1.0.1](https://github.com/uapiq/usdk-python/compare/v1.0.0...v1.0.1)
+
+### Bug Fixes
+
+* compat with Python 3.14 ([8b41ed0](https://github.com/uapiq/usdk-python/commit/8b41ed0fb52a95e3fdefe94fe803adf4c5f448d7))
+
+
+### Chores
+
+* **package:** drop Python 3.8 support ([b02cc61](https://github.com/uapiq/usdk-python/commit/b02cc61ea9ef09e74ee061464157261300bddf44))
+
 ## 1.0.0 (2025-11-07)
 
 Full Changelog: [v0.0.1...v1.0.0](https://github.com/uapiq/usdk-python/compare/v0.0.1...v1.0.0)
