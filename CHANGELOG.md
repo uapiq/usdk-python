@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.3 (2025-11-22)
+
+Full Changelog: [v1.0.2...v1.0.3](https://github.com/uapiq/usdk-python/compare/v1.0.2...v1.0.3)
+
+### Chores
+
+* add Python 3.14 classifier and testing ([c13ba77](https://github.com/uapiq/usdk-python/commit/c13ba7735dcbe87fb34124912121c5e0996dabeb))
+
 ## 1.0.2 (2025-11-12)
 
 Full Changelog: [v1.0.1...v1.0.2](https://github.com/uapiq/usdk-python/compare/v1.0.1...v1.0.2)
