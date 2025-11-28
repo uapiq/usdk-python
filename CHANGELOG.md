@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.0.3 (2025-11-28)
+
+Full Changelog: [v1.0.2...v1.0.3](https://github.com/uapiq/usdk-python/compare/v1.0.2...v1.0.3)
+
+### Bug Fixes
+
+* ensure streams are always closed ([782395e](https://github.com/uapiq/usdk-python/commit/782395e06f79b52a6b75a2e711917744c2ceeaa0))
+
+
+### Chores
+
+* add Python 3.14 classifier and testing ([c13ba77](https://github.com/uapiq/usdk-python/commit/c13ba7735dcbe87fb34124912121c5e0996dabeb))
+* **deps:** mypy 1.18.1 has a regression, pin to 1.17 ([9831cab](https://github.com/uapiq/usdk-python/commit/9831cabd05a0b04721eb37bfd9c3eb927ed431a4))
+
 ## 1.0.2 (2025-11-12)
 
 Full Changelog: [v1.0.1...v1.0.2](https://github.com/uapiq/usdk-python/compare/v1.0.1...v1.0.2)
