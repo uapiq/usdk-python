@@ -81,6 +81,7 @@ pip install usdk[aiohttp]
 Then you can enable it by instantiating the client with `http_client=DefaultAioHttpClient()`:
 
 ```python
+import os
 import asyncio
 from uapi import DefaultAioHttpClient
 from uapi import AsyncuAPI
@@ -88,7 +89,7 @@ from uapi import AsyncuAPI
 
 async def main() -> None:
     async with AsyncuAPI(
-        api_key="My API Key",
+        api_key=os.environ.get("UAPI_API_KEY"),  # This is the default and can be omitted
         http_client=DefaultAioHttpClient(),
     ) as client:
         response = await client.search(
