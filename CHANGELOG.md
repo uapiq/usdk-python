@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.0.4 (2025-12-09)
+
+Full Changelog: [v1.0.3...v1.0.4](https://github.com/uapiq/usdk-python/compare/v1.0.3...v1.0.4)
+
+### Bug Fixes
+
+* **types:** allow pyright to infer TypedDict types within SequenceNotStr ([ed589b4](https://github.com/uapiq/usdk-python/commit/ed589b4a2c19dc2a65e3cd8ea580db45591b9e15))
+
+
+### Chores
+
+* **docs:** use environment variables for authentication in code snippets ([3bcaba8](https://github.com/uapiq/usdk-python/commit/3bcaba8716f021a5ed859145961f9ecb18afa2ab))
+* update lockfile ([43e973d](https://github.com/uapiq/usdk-python/commit/43e973de48cf6ace9854b1339f5034bb8158d14c))
+
 ## 1.0.3 (2025-11-28)
 
 Full Changelog: [v1.0.2...v1.0.3](https://github.com/uapiq/usdk-python/compare/v1.0.2...v1.0.3)
