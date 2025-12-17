@@ -29,6 +29,7 @@ from ._utils import (
     get_async_library,
     async_maybe_transform,
 )
+from ._compat import cached_property
 from ._version import __version__
 from ._response import (
     to_raw_response_wrapper,
@@ -49,9 +50,6 @@ __all__ = ["Timeout", "Transport", "ProxiesTypes", "RequestOptions", "uAPI", "As
 
 
 class uAPI(SyncAPIClient):
-    with_raw_response: uAPIWithRawResponse
-    with_streaming_response: uAPIWithStreamedResponse
-
     # client options
     api_key: str
     cache_ttl: int | None
@@ -110,8 +108,13 @@ class uAPI(SyncAPIClient):
             _strict_response_validation=_strict_response_validation,
         )
 
-        self.with_raw_response = uAPIWithRawResponse(self)
-        self.with_streaming_response = uAPIWithStreamedResponse(self)
+    @cached_property
+    def with_raw_response(self) -> uAPIWithRawResponse:
+        return uAPIWithRawResponse(self)
+
+    @cached_property
+    def with_streaming_response(self) -> uAPIWithStreamedResponse:
+        return uAPIWithStreamedResponse(self)
 
     @property
     @override
@@ -292,9 +295,6 @@ class uAPI(SyncAPIClient):
 
 
 class AsyncuAPI(AsyncAPIClient):
-    with_raw_response: AsyncuAPIWithRawResponse
-    with_streaming_response: AsyncuAPIWithStreamedResponse
-
     # client options
     api_key: str
     cache_ttl: int | None
@@ -353,8 +353,13 @@ class AsyncuAPI(AsyncAPIClient):
             _strict_response_validation=_strict_response_validation,
         )
 
-        self.with_raw_response = AsyncuAPIWithRawResponse(self)
-        self.with_streaming_response = AsyncuAPIWithStreamedResponse(self)
+    @cached_property
+    def with_raw_response(self) -> AsyncuAPIWithRawResponse:
+        return AsyncuAPIWithRawResponse(self)
+
+    @cached_property
+    def with_streaming_response(self) -> AsyncuAPIWithStreamedResponse:
+        return AsyncuAPIWithStreamedResponse(self)
 
     @property
     @override
@@ -535,7 +540,11 @@ class AsyncuAPI(AsyncAPIClient):
 
 
 class uAPIWithRawResponse:
+    _client: uAPI
+
     def __init__(self, client: uAPI) -> None:
+        self._client = client
+
         self.extract = to_raw_response_wrapper(
             client.extract,
         )
@@ -545,7 +554,11 @@ class uAPIWithRawResponse:
 
 
 class AsyncuAPIWithRawResponse:
+    _client: AsyncuAPI
+
     def __init__(self, client: AsyncuAPI) -> None:
+        self._client = client
+
         self.extract = async_to_raw_response_wrapper(
             client.extract,
         )
@@ -555,7 +568,11 @@ class AsyncuAPIWithRawResponse:
 
 
 class uAPIWithStreamedResponse:
+    _client: uAPI
+
     def __init__(self, client: uAPI) -> None:
+        self._client = client
+
         self.extract = to_streamed_response_wrapper(
             client.extract,
         )
@@ -565,7 +582,11 @@ class uAPIWithStreamedResponse:
 
 
 class AsyncuAPIWithStreamedResponse:
+    _client: AsyncuAPI
+
     def __init__(self, client: AsyncuAPI) -> None:
+        self._client = client
+
         self.extract = async_to_streamed_response_wrapper(
             client.extract,
         )
