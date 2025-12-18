@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.0.5 (2025-12-18)
+
+Full Changelog: [v1.0.4...v1.0.5](https://github.com/uapiq/usdk-python/compare/v1.0.4...v1.0.5)
+
+### Bug Fixes
+
+* use async_to_httpx_files in patch method ([efdf634](https://github.com/uapiq/usdk-python/commit/efdf634bee0018c7881bc6d76e52477b093a7a94))
+
+
+### Chores
+
+* **internal:** add missing files argument to base client ([c5e2b68](https://github.com/uapiq/usdk-python/commit/c5e2b68bfa1151f375a99dc758245db2611037fc))
+* speedup initial import ([3f7c8d0](https://github.com/uapiq/usdk-python/commit/3f7c8d04e6375dabf92267c72c3b87a4e512de87))
+
 ## 1.0.4 (2025-12-09)
 
 Full Changelog: [v1.0.3...v1.0.4](https://github.com/uapiq/usdk-python/compare/v1.0.3...v1.0.4)
