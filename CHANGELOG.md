@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.1.0 (2026-01-14)
+
+Full Changelog: [v1.0.5...v1.1.0](https://github.com/uapiq/usdk-python/compare/v1.0.5...v1.1.0)
+
+### Features
+
+* **client:** add support for binary request streaming ([c77b22f](https://github.com/uapiq/usdk-python/commit/c77b22f30bc1a66b2b2803995321137658d4f207))
+
+
+### Chores
+
+* **internal:** add `--fix` argument to lint script ([b3bc81e](https://github.com/uapiq/usdk-python/commit/b3bc81eec1a682da3cec84fa4c99ce3beafc825c))
+* **internal:** codegen related update ([5eea90f](https://github.com/uapiq/usdk-python/commit/5eea90fedb9f4206788f16d962afc042cd368b87))
+
 ## 1.0.5 (2025-12-18)
 
 Full Changelog: [v1.0.4...v1.0.5](https://github.com/uapiq/usdk-python/compare/v1.0.4...v1.0.5)
