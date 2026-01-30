@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.2.0 (2026-01-30)
+
+Full Changelog: [v1.1.0...v1.2.0](https://github.com/uapiq/usdk-python/compare/v1.1.0...v1.2.0)
+
+### Features
+
+* **client:** add custom JSON encoder for extended type support ([ebe2768](https://github.com/uapiq/usdk-python/commit/ebe276808878e876161cab33ac14b948035f6de4))
+
+
+### Chores
+
+* **ci:** upgrade `actions/github-script` ([e595ee6](https://github.com/uapiq/usdk-python/commit/e595ee6d76bcaf768667f6223d6c4a54c0c74f13))
+* **internal:** update `actions/checkout` version ([ee48ba2](https://github.com/uapiq/usdk-python/commit/ee48ba2c27a046901741a065a4f4b666b0915542))
+
 ## 1.1.0 (2026-01-14)
 
 Full Changelog: [v1.0.5...v1.1.0](https://github.com/uapiq/usdk-python/compare/v1.0.5...v1.1.0)
