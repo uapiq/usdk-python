@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.2.1 (2026-03-17)
+
+Full Changelog: [v1.2.0...v1.2.1](https://github.com/uapiq/usdk-python/compare/v1.2.0...v1.2.1)
+
+### Bug Fixes
+
+* **pydantic:** do not pass `by_alias` unless set ([0c4bc69](https://github.com/uapiq/usdk-python/commit/0c4bc694f630bb118a7a01d58657f7b12139da5e))
+
+
+### Chores
+
+* **ci:** skip uploading artifacts on stainless-internal branches ([d043f0e](https://github.com/uapiq/usdk-python/commit/d043f0ebff27af77f7302f2de46fb7d949bfc7c1))
+* format all `api.md` files ([a4cb590](https://github.com/uapiq/usdk-python/commit/a4cb590fd4c14133096f270ed7972644ca762a0f))
+* **internal:** add request options to SSE classes ([f20f689](https://github.com/uapiq/usdk-python/commit/f20f6898d03c9d053ec65a8ed9d4527d1498f153))
+* **internal:** bump dependencies ([707fe17](https://github.com/uapiq/usdk-python/commit/707fe179cd956323743d188d3bc4652b7c8f4688))
+* **internal:** fix lint error on Python 3.14 ([54f60cc](https://github.com/uapiq/usdk-python/commit/54f60ccf361cf9619ee55cf9d980803cce289ebb))
+* **internal:** make `test_proxy_environment_variables` more resilient ([fd4d106](https://github.com/uapiq/usdk-python/commit/fd4d106283d4ad1289947d8a862c771daabac7ac))
+* **internal:** make `test_proxy_environment_variables` more resilient to env ([5235fdf](https://github.com/uapiq/usdk-python/commit/5235fdf2bf9ae3e8b46e49d131a3269e533ca970))
+* **internal:** remove mock server code ([c559627](https://github.com/uapiq/usdk-python/commit/c559627c518d7d5334a9dd453cbee094882fc147))
+* update mock server docs ([8ff2dec](https://github.com/uapiq/usdk-python/commit/8ff2decd47b984c5bfe6d247f4c275b61e90669a))
+
 ## 1.2.0 (2026-01-30)
 
 Full Changelog: [v1.1.0...v1.2.0](https://github.com/uapiq/usdk-python/compare/v1.1.0...v1.2.0)
