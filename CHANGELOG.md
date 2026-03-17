@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.2 (2026-03-17)
+
+Full Changelog: [v1.2.1...v1.2.2](https://github.com/uapiq/usdk-python/compare/v1.2.1...v1.2.2)
+
+### Bug Fixes
+
+* **deps:** bump minimum typing-extensions version ([aa600e8](https://github.com/uapiq/usdk-python/commit/aa600e8e0df9b47fd037fcb550ff793dc8bf3ef2))
+
 ## 1.2.1 (2026-03-17)
 
 Full Changelog: [v1.2.0...v1.2.1](https://github.com/uapiq/usdk-python/compare/v1.2.0...v1.2.1)
