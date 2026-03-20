@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.2.3 (2026-03-20)
+
+Full Changelog: [v1.2.2...v1.2.3](https://github.com/uapiq/usdk-python/compare/v1.2.2...v1.2.3)
+
+### Bug Fixes
+
+* sanitize endpoint path params ([eb24949](https://github.com/uapiq/usdk-python/commit/eb249494e1db3dab7c628bd839a55b7080c6e933))
+
+
+### Chores
+
+* **internal:** tweak CI branches ([dbc4c5d](https://github.com/uapiq/usdk-python/commit/dbc4c5dbeb0681c2aabcf43f4af4ff27b151862a))
+
 ## 1.2.2 (2026-03-17)
 
 Full Changelog: [v1.2.1...v1.2.2](https://github.com/uapiq/usdk-python/compare/v1.2.1...v1.2.2)
