@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.3.0 (2026-03-27)
+
+Full Changelog: [v1.2.3...v1.3.0](https://github.com/uapiq/usdk-python/compare/v1.2.3...v1.3.0)
+
+### Features
+
+* **internal:** implement indices array format for query and form serialization ([4866e03](https://github.com/uapiq/usdk-python/commit/4866e0306cbf50bbfcb8d7cf00dfaeb68a65282e))
+
+
+### Chores
+
+* **ci:** skip lint on metadata-only changes ([32bccee](https://github.com/uapiq/usdk-python/commit/32bccee63c93e4ac25378ad642a84d78582935cc))
+* **internal:** update gitignore ([7dd198a](https://github.com/uapiq/usdk-python/commit/7dd198aa1e98ddb60bfb68477703c57b23592476))
+
 ## 1.2.3 (2026-03-20)
 
 Full Changelog: [v1.2.2...v1.2.3](https://github.com/uapiq/usdk-python/compare/v1.2.2...v1.2.3)
