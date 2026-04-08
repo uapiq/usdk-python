@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.1 (2026-04-08)
+
+Full Changelog: [v1.3.0...v1.3.1](https://github.com/uapiq/usdk-python/compare/v1.3.0...v1.3.1)
+
+### Bug Fixes
+
+* **client:** preserve hardcoded query params when merging with user params ([caedfd5](https://github.com/uapiq/usdk-python/commit/caedfd5af8017be6518dc30fdd56e51d008ae59e))
+
 ## 1.3.0 (2026-03-27)
 
 Full Changelog: [v1.2.3...v1.3.0](https://github.com/uapiq/usdk-python/compare/v1.2.3...v1.3.0)
