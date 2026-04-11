@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.2 (2026-04-11)
+
+Full Changelog: [v1.3.1...v1.3.2](https://github.com/uapiq/usdk-python/compare/v1.3.1...v1.3.2)
+
+### Bug Fixes
+
+* ensure file data are only sent as 1 parameter ([a8b2480](https://github.com/uapiq/usdk-python/commit/a8b24803f15f722cf39f9318037fde6c903fca1b))
+
 ## 1.3.1 (2026-04-08)
 
 Full Changelog: [v1.3.0...v1.3.1](https://github.com/uapiq/usdk-python/compare/v1.3.0...v1.3.1)
