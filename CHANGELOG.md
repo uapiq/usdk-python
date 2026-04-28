@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.4.0 (2026-04-28)
+
+Full Changelog: [v1.3.2...v1.4.0](https://github.com/uapiq/usdk-python/compare/v1.3.2...v1.4.0)
+
+### Features
+
+* support setting headers via env ([45263d9](https://github.com/uapiq/usdk-python/commit/45263d9b85671f894e13b857e743f277fbb94e4f))
+
+
+### Bug Fixes
+
+* use correct field name format for multipart file arrays ([7735773](https://github.com/uapiq/usdk-python/commit/77357734428d6457f6b31c58b2c27c12480b272e))
+
+
+### Performance Improvements
+
+* **client:** optimize file structure copying in multipart requests ([36b0819](https://github.com/uapiq/usdk-python/commit/36b0819ef2f66872cef9457881f14b19f62f6053))
+
+
+### Chores
+
+* **internal:** more robust bootstrap script ([e7c06ad](https://github.com/uapiq/usdk-python/commit/e7c06ad8b2b200c0d195b3361df773b8d0c943db))
+
 ## 1.3.2 (2026-04-11)
 
 Full Changelog: [v1.3.1...v1.3.2](https://github.com/uapiq/usdk-python/compare/v1.3.1...v1.3.2)
