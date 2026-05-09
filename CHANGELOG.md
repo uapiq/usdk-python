@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.4.1 (2026-05-09)
+
+Full Changelog: [v1.4.0...v1.4.1](https://github.com/uapiq/usdk-python/compare/v1.4.0...v1.4.1)
+
+### Bug Fixes
+
+* **client:** add missing f-string prefix in file type error message ([03cc7e8](https://github.com/uapiq/usdk-python/commit/03cc7e86fc4efe3e8e1fcfea5335a6a3ae2348b7))
+
+
+### Chores
+
+* **internal:** reformat pyproject.toml ([86bbc7a](https://github.com/uapiq/usdk-python/commit/86bbc7a1107c1b5350ea2b0a12a23e39a6ecab2c))
+
 ## 1.4.0 (2026-04-28)
 
 Full Changelog: [v1.3.2...v1.4.0](https://github.com/uapiq/usdk-python/compare/v1.3.2...v1.4.0)
