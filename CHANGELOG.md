@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.1 (2026-05-13)
+
+Full Changelog: [v1.5.0...v1.5.1](https://github.com/uapiq/usdk-python/compare/v1.5.0...v1.5.1)
+
 ## 1.5.0 (2026-05-12)
 
 Full Changelog: [v1.4.1...v1.5.0](https://github.com/uapiq/usdk-python/compare/v1.4.1...v1.5.0)
